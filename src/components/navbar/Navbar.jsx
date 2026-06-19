@@ -17,7 +17,7 @@ const user =
   userData?.data?.session?.user ||
   null;
 
-console.log("USER:", user);
+
   
 
   // 🎯 ২. window.location.pathname বাদ দিয়ে usePathname() ব্যবহার করো
