@@ -23,6 +23,12 @@ const MyPrompts = () => {
   const { data: session, isPending: authPending } = authClient.useSession();
   const user = session?.user || null;
   const currentUserId = user?.id || user?._id; 
+  useEffect(() => {
+  console.log("Session User:", user); // চেক করো এখানে ইউজার আইডি আছে কি না
+  if (currentUserId && !authPending) {
+    fetchMyPrompts();
+  }
+}, [currentUserId, authPending]);
   
   const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:5000";
 
@@ -30,7 +36,7 @@ const MyPrompts = () => {
   const fetchMyPrompts = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${SERVER_URL}/api/prompts/my-prompts?userId=${currentUserId}`);
+      const response = await fetch(`${SERVER_URL}/api/user/my-prompts?userId=${currentUserId}`);
       if (!response.ok) throw new Error("Failed to fetch prompts");
       const data = await response.json();
       setPrompts(data);

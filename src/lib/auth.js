@@ -4,7 +4,6 @@ import { mongodbAdapter } from "better-auth/adapters/mongodb";
 
 const client = new MongoClient(process.env.PUBLIC_MONGODB_URI);
 const db = client.db('PromptHub');
-
 export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
