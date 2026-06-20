@@ -18,13 +18,15 @@ const RegisterForm = () => {
     const formData = new FormData(e.target);
     const userData = Object.fromEntries(formData.entries());
     console.log("Form Data:", userData);
-
+    const plan =  selectedRole ==='user' ? 'free' : 'premium';
     const { data, error } = await authClient.signUp.email({
       name: userData.fullName,
       email: userData.email,
       password: userData.password,
       image: userData.photoUrl,
-      role: userData.role, // রেডিও গ্রুপ থেকে সিলেক্টেড রোলটি যাবে
+      role: userData.role,
+      plan: plan,
+       // রেডিও গ্রুপ থেকে সিলেক্টেড রোলটি যাবে
     });
 
     if (error) {

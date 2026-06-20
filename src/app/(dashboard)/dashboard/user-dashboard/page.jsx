@@ -98,7 +98,41 @@ const UserDashboard = () => {
   ) : (
     // ডাটা না থাকলে একটি লোডিং মেসেজ দেখাবে
     <div className="h-[280px] flex items-center justify-center text-gray-500 font-mono text-xs">
-      LOADING CHART DATA...
+    <div className="w-full flex items-center justify-center py-8">
+  <div className="relative w-full max-w-2xl overflow-hidden rounded-2xl border border-violet-500/20 bg-gradient-to-br from-[#0B0A1A] via-[#14112B] to-[#090814] p-8">
+
+    <div className="absolute top-0 left-1/2 h-40 w-40 -translate-x-1/2 rounded-full bg-violet-600/20 blur-3xl"></div>
+
+    <div className="relative z-10 flex flex-col items-center text-center">
+
+      <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-violet-500/10 border border-violet-500/20">
+        <Copy className="h-8 w-8 text-violet-400" />
+      </div>
+
+      <h2 className="text-2xl md:text-3xl font-bold text-white">
+        No one has copied
+      </h2>
+
+      <h2 className="text-2xl md:text-3xl font-bold">
+        <span className="bg-gradient-to-r from-violet-400 to-fuchsia-500 bg-clip-text text-transparent">
+          your
+        </span>{" "}
+        prompt yet.
+      </h2>
+
+      <p className="mt-4 text-sm text-gray-400 max-w-md">
+        Share your prompt with the community and watch your first copy appear.
+      </p>
+
+      <div className="mt-6 flex items-center gap-3">
+        <div className="w-12 h-[1px] bg-violet-500/30"></div>
+        <div className="w-2 h-2 rotate-45 bg-violet-400"></div>
+        <div className="w-12 h-[1px] bg-violet-500/30"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
     </div>
   )}
 </div>

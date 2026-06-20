@@ -124,19 +124,12 @@ const Sidebar = () => {
         {/* 👑 নিচের সেকশন: আপগ্রেড বাটন ও সাইন আউট (ফিক্সড অ্যাট বটম) */}
         <div className="space-y-3 pt-4 border-t border-white/[0.06] mb-2">
           
-          {/* Upgrade to Premium বাটন */}
-          <Link
-            href="/dashboard/user-dashboard/profile"
-            className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-gradient-to-r from-amber-500/10 to-orange-500/5 hover:from-amber-500/20 hover:to-orange-500/10 border border-amber-500/30 hover:border-amber-500/50 rounded-xl text-xs font-semibold tracking-wide text-amber-500 transition-all duration-300 shadow-lg shadow-amber-500/5 group"
-          >
-            <Crown className="h-4 w-4 text-amber-500 transition-transform duration-300 group-hover:rotate-12" />
-            Upgrade to Premium and unlock all features
-          </Link>
+          
 
           {/* Sign Out বাটন */}
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium text-gray-500 hover:text-red-400 hover:bg-red-500/5 rounded-xl transition-all duration-300 cursor-pointer group"
+            className="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium bg-amber-100 p-5  text-black hover:text-red-400 hover:bg-red-500/5 rounded-xl transition-all duration-300 cursor-pointer group"
           >
             <LogOut className="h-4 w-4 text-gray-500 group-hover:text-red-400 transition-transform duration-300 group-hover:translate-x-0.5" />
             Sign Out
