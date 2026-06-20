@@ -20,19 +20,16 @@ const UserDashboard = () => {
 
   useEffect(() => {
     if (isPending) return;
-
     if (!user) {
       router.replace('/login');
       return;
     }
-
     if (user.role !== 'user') {
       if (user.role === 'admin') router.replace('/dashboard/admin-dashboard');
       else if (user.role === 'creator') router.replace('/dashboard/creator-dashboard');
       return;
     }
 
-    // সার্ভার থেকে ডাইনামিক ডাটা ফেচ করা
     const fetchStats = async () => {
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/stats/${user.id}?email=${user.email}`);
@@ -42,14 +39,13 @@ const UserDashboard = () => {
         console.error("Error fetching stats:", error);
       }
     };
-
     fetchStats();
   }, [user, isPending, router]);
 
   if (isPending || !user || user.role !== 'user') {
     return (
       <div className="min-h-screen bg-[#030014] flex items-center justify-center text-purple-400 font-mono text-xs tracking-widest animate-pulse">
-        LOADING DASHBOARD...
+        LOADING...
       </div>
     );
   }
@@ -58,7 +54,6 @@ const UserDashboard = () => {
     <div className="space-y-7">
       <div>
         <h1 className="text-2xl font-bold tracking-wide text-white">Dashboard Overview</h1>
-        <p className="text-gray-400 text-xs mt-1">Welcome back, {user?.name}!</p>
       </div>
 
       {/* Stats Grid */}
@@ -77,26 +72,36 @@ const UserDashboard = () => {
         ))}
       </div>
 
-      {/* Dynamic Activity Chart */}
-      <div className="bg-[#0c081e]/30 border border-white/[0.04] rounded-2xl p-6 backdrop-blur-xl">
-        <h3 className="text-sm font-semibold text-white mb-6">Activity Overview</h3>
-        <div className="h-[280px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={stats.activityData}>
-              <defs>
-                <linearGradient id="colorViews" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#a855f7" stopOpacity={0.25} />
-                  <stop offset="95%" stopColor="#a855f7" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <XAxis dataKey="name" axisLine={false} tickLine={false} stroke="#4b5563" dy={10} />
-              <YAxis axisLine={false} tickLine={false} stroke="#4b5563" />
-              <Tooltip contentStyle={{ backgroundColor: '#0c081e', borderRadius: '12px' }} />
-              <Area type="monotone" dataKey="views" stroke="#a855f7" fillOpacity={1} fill="url(#colorViews)" />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
+      {/* Fixed Dynamic Activity Chart */}
+   {/* Fixed Dynamic Activity Chart */}
+<div className="bg-[#0c081e]/30 border border-white/[0.04] rounded-2xl p-6 backdrop-blur-xl">
+  <h3 className="text-sm font-semibold text-white mb-6">Activity Overview</h3>
+  
+  {/* এখানে কন্ডিশন চেক করছি: ডাটা না থাকলে গ্রাফ লোড হবে না */}
+  {stats.activityData && stats.activityData.length > 0 ? (
+    <div style={{ width: '100%', height: 280 }}>
+      <ResponsiveContainer width="100%" height="100%">
+        <AreaChart data={stats.activityData}>
+          <defs>
+            <linearGradient id="colorViews" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#a855f7" stopOpacity={0.25} />
+              <stop offset="95%" stopColor="#a855f7" stopOpacity={0} />
+            </linearGradient>
+          </defs>
+          <XAxis dataKey="name" axisLine={false} tickLine={false} stroke="#4b5563" />
+          <YAxis axisLine={false} tickLine={false} stroke="#4b5563" />
+          <Tooltip contentStyle={{ backgroundColor: '#0c081e', borderRadius: '12px', border: 'none' }} />
+          <Area type="monotone" dataKey="TotalCopies" stroke="#a855f7" fillOpacity={1} fill="url(#colorViews)" />
+        </AreaChart>
+      </ResponsiveContainer>
+    </div>
+  ) : (
+    // ডাটা না থাকলে একটি লোডিং মেসেজ দেখাবে
+    <div className="h-[280px] flex items-center justify-center text-gray-500 font-mono text-xs">
+      LOADING CHART DATA...
+    </div>
+  )}
+</div>
     </div>
   );
 };
