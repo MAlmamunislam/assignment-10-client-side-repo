@@ -1,7 +1,7 @@
 "use client";
 import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -10,6 +10,8 @@ const RegisterForm = () => {
   // ডিফল্ট সিলেক্টেড রোল 'user' রাখার জন্য স্টেট
   const [selectedRole, setSelectedRole] = useState("user");
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,7 +36,7 @@ const RegisterForm = () => {
 
     if (data) {
       toast.success("Account created successfully! 🎉");
-      router.push('/dashboard');
+      router.push(redirect ? decodeURIComponent(redirect) : "/");
     }
   };
 
@@ -58,7 +60,6 @@ const RegisterForm = () => {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-5">
-          
           {/* ১. Full Name Input */}
           <div className="flex flex-col gap-2">
             <label className="text-xs font-semibold text-purple-400/80 uppercase tracking-wider font-mono px-1">
@@ -106,14 +107,16 @@ const RegisterForm = () => {
             <label className="text-xs font-semibold text-purple-400/80 uppercase tracking-wider font-mono px-1">
               Choose Account Type <span className="text-red-500">*</span>
             </label>
-            
+
             <div className="grid grid-cols-2 gap-3">
               {/* User Radio Card */}
-              <label className={`flex flex-col justify-center items-start p-3.5 rounded-xl border cursor-pointer transition-all duration-300 bg-[#0d0926]/20 ${
-                selectedRole === "user" 
-                  ? "border-purple-500 bg-purple-500/5 shadow-md shadow-purple-500/10" 
-                  : "border-white/[0.08] hover:border-white/[0.15]"
-              }`}>
+              <label
+                className={`flex flex-col justify-center items-start p-3.5 rounded-xl border cursor-pointer transition-all duration-300 bg-[#0d0926]/20 ${
+                  selectedRole === "user"
+                    ? "border-purple-500 bg-purple-500/5 shadow-md shadow-purple-500/10"
+                    : "border-white/[0.08] hover:border-white/[0.15]"
+                }`}
+              >
                 <div className="flex items-center gap-2">
                   <input
                     type="radio"
@@ -123,7 +126,9 @@ const RegisterForm = () => {
                     onChange={() => setSelectedRole("user")}
                     className="accent-purple-500 h-4 w-4 cursor-pointer"
                   />
-                  <span className="text-sm font-semibold text-white/90">User</span>
+                  <span className="text-sm font-semibold text-white/90">
+                    User
+                  </span>
                 </div>
                 <span className="text-[10px] text-gray-500 mt-1 pl-6 leading-tight">
                   Browse & bookmark prompts
@@ -131,11 +136,13 @@ const RegisterForm = () => {
               </label>
 
               {/* Creator Radio Card */}
-              <label className={`flex flex-col justify-center items-start p-3.5 rounded-xl border cursor-pointer transition-all duration-300 bg-[#0d0926]/20 ${
-                selectedRole === "creator" 
-                  ? "border-purple-500 bg-purple-500/5 shadow-md shadow-purple-500/10" 
-                  : "border-white/[0.08] hover:border-white/[0.15]"
-              }`}>
+              <label
+                className={`flex flex-col justify-center items-start p-3.5 rounded-xl border cursor-pointer transition-all duration-300 bg-[#0d0926]/20 ${
+                  selectedRole === "creator"
+                    ? "border-purple-500 bg-purple-500/5 shadow-md shadow-purple-500/10"
+                    : "border-white/[0.08] hover:border-white/[0.15]"
+                }`}
+              >
                 <div className="flex items-center gap-2">
                   <input
                     type="radio"
@@ -145,7 +152,9 @@ const RegisterForm = () => {
                     onChange={() => setSelectedRole("creator")}
                     className="accent-purple-500 h-4 w-4 cursor-pointer"
                   />
-                  <span className="text-sm font-semibold text-white/90">Creator</span>
+                  <span className="text-sm font-semibold text-white/90">
+                    Creator
+                  </span>
                 </div>
                 <span className="text-[10px] text-gray-500 mt-1 pl-6 leading-tight">
                   Sell & share your own prompts
@@ -191,7 +200,7 @@ const RegisterForm = () => {
         <p className="text-center text-sm text-gray-500 mt-6 font-medium">
           Already have an account?{" "}
           <Link
-            href="/login"
+            href={redirect ? `/login?redirect=${redirect}` : "/login"} // এখানে লিংকটি ডাইনামিক করে দাও
             className="text-purple-400 font-semibold hover:text-purple-300 transition-colors"
           >
             Sign In

@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import {
@@ -23,6 +23,10 @@ const PromptDetailsPage = () => {
   const [reportReason, setReportReason] = useState("");
   const [reportDesc, setReportDesc] = useState("");
   const [showReportModal, setShowReportModal] = useState(false);
+
+  // for redirect user to login page
+  const pathname = usePathname();
+  
   
   // Review States
   const [rating, setRating] = useState(0);
@@ -32,6 +36,20 @@ const PromptDetailsPage = () => {
   const userData = authClient.useSession();
   const user = userData?.data?.user || userData?.data?.session?.user || null;
   const API = process.env.NEXT_PUBLIC_SERVER_URL;
+// callback url 
+const isLoadingSession = userData?.isPending;
+
+useEffect(() => {
+  if (!isLoadingSession && !user) {
+    // বর্তমান ইউআরএলটি এনকোড করে পাঠাচ্ছি যাতে রিডাইরেক্ট করতে সুবিধা হয়
+    router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
+  }
+}, [isLoadingSession, user, pathname, router]);
+
+
+
+
+
 
   useEffect(() => {
     const fetchPrompt = async () => {
@@ -156,12 +174,12 @@ const PromptDetailsPage = () => {
             <div className="mt-10 bg-[#0d0a21] p-6 rounded-lg">
               <h2 className="text-xl font-bold mb-6">Reviews & Comments</h2>
               <form onSubmit={handleReviewSubmit} className="mb-8 bg-[#161330] p-4 rounded-lg">
-                <div className="flex gap-2 mb-3">
+                <div required className="flex gap-2 mb-3">
                   {[1, 2, 3, 4, 5].map((star) => (
-                    <FaStar key={star} className={`cursor-pointer ${rating >= star ? "text-yellow-400" : "text-gray-600"}`} onClick={() => setRating(star)} />
+                    <FaStar  key={star} className={`cursor-pointer ${rating >= star ? "text-yellow-400" : "text-gray-600"}`} onClick={() => setRating(star)} />
                   ))}
                 </div>
-                <textarea className="w-full bg-[#070514] p-3 rounded text-white" placeholder="Write a comment..." value={comment} onChange={(e) => setComment(e.target.value)} />
+                <textarea required className="w-full bg-[#070514] p-3 rounded text-white" placeholder="Write a comment..." value={comment} onChange={(e) => setComment(e.target.value)} />
                 <button type="submit" className="mt-3 bg-blue-600 px-4 py-2 rounded">Submit Review</button>
               </form>
 
