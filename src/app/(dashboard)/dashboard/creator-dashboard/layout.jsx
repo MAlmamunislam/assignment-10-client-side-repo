@@ -3,7 +3,7 @@ import CreatorSidebar from "./CreatorSidebar";
 export default function DashboardLayout({ children }) {
   return (
     // 'flex' ক্লাসটিই মূল, যা চিলড্রেনদের পাশাপাশি রাখে
-    <div className="flex min-h-screen bg-[#030014]">
+    <div className="min-h-screen bg-[#030014] text-white flex flex-col lg:flex-row overflow-hidden">
       
       {/* সাইডবার */}
       <div className="w-64 flex-shrink-0">

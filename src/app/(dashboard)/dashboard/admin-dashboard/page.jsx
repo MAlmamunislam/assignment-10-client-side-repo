@@ -2,6 +2,7 @@
 import { authClient } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
+import AdminAnalytics from './AdminAnalytics';
 
 const AdminDashboard = () => {
   const router = useRouter();
@@ -39,8 +40,9 @@ const AdminDashboard = () => {
 
   return (
     <div className="p-8 text-white">
-      <h1 className="text-2xl font-bold">Welcome to Admin Dashboard</h1>
-      <p className="text-gray-400 mt-2">হ্যালো অ্যাডমিন, আপনার প্যানেল সুরক্ষিত।</p>
+      <h1 className="text-2xl font-bold mb-10">Welcome to Admin Dashboard</h1>
+      
+      <AdminAnalytics />
     </div>
   );
 };
