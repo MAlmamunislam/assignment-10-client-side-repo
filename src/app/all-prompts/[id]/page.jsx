@@ -67,7 +67,10 @@ useEffect(() => {
   }, [id]);
 
   
- const isLocked = prompt?.visibility?.toLowerCase() === 'private' && user?.plan !== 'premium';
+const isLocked =
+  user?.role === 'user' &&
+  prompt?.visibility?.toLowerCase() === 'private' &&
+  user?.plan !== 'premium';
   const handleCopy = async () => {
     if (isLocked) return;
     navigator.clipboard.writeText(prompt.content);

@@ -15,7 +15,7 @@ export default function Success() {
   console.log(user);
   useEffect(() => {
     if (user) {
-      fetch("http://localhost:5000/api/users/upgrade-to-premium", {
+      fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/upgrade-to-premium`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

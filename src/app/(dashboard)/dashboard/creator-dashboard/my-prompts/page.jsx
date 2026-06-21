@@ -2,8 +2,10 @@
 import { authClient } from "@/lib/auth-client";
 import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const MyPrompts = () => {
+  const router = useRouter();
   const [prompts, setPrompts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -14,7 +16,7 @@ const MyPrompts = () => {
   const [editContent, setEditContent] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
 
-  // 🗑️ ডিলিট মডালের স্টেট (নতুন মডার্ন অ্যালার্ট)
+  // 🗑️ ডিলিট মডালের স্টেট
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [promptIdToDelete, setPromptIdToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -22,17 +24,23 @@ const MyPrompts = () => {
   // BetterAuth সেশন
   const { data: session, isPending: authPending } = authClient.useSession();
   const user = session?.user || null;
-  const currentUserId = user?.id || user?._id; 
-  useEffect(() => {
-  console.log("Session User:", user); // চেক করো এখানে ইউজার আইডি আছে কি না
-  if (currentUserId && !authPending) {
-    fetchMyPrompts();
-  }
-}, [currentUserId, authPending]);
-  
+  const currentUserId = user?.id || user?._id;
   const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:5000";
 
-  // 🔄 ডাটা ফেচিং
+  // 🛡️ রোল চেক এবং ডাটা ফেচিং লজিক
+  useEffect(() => {
+    if (!authPending) {
+      if (!user) {
+        router.push("/login");
+      } else if (user.role !== "creator") {
+        toast.error("You are not authorized to view this page!");
+        router.push("/");
+      } else if (currentUserId) {
+        fetchMyPrompts();
+      }
+    }
+  }, [user, authPending, router, currentUserId]);
+
   const fetchMyPrompts = async () => {
     try {
       setLoading(true);
@@ -47,12 +55,6 @@ const MyPrompts = () => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (currentUserId && !authPending) {
-      fetchMyPrompts();
-    }
-  }, [currentUserId, authPending, SERVER_URL]);
 
   // 📝 আপডেট মডাল ওপেন
   const openUpdateModal = (prompt) => {
@@ -75,7 +77,7 @@ const MyPrompts = () => {
       const response = await fetch(`${SERVER_URL}/api/prompts/update/${selectedPrompt._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: editTitle, content: editContent }) // 👈 শুধু এই দুইটা ফিল্ড পাঠাচ্ছি
+        body: JSON.stringify({ title: editTitle, content: editContent })
       });
 
       const data = await response.json();
@@ -125,27 +127,20 @@ const MyPrompts = () => {
     }
   };
 
-  if (authPending || loading) {
+  if (authPending || (user && user.role === "creator" && loading)) {
     return (
       <div className="flex justify-center items-center min-h-[400px] text-white">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
-        <span className="ml-3 font-mono text-sm text-gray-400">Loading your prompts...</span>
+        <span className="ml-3 font-mono text-sm text-gray-400">Loading...</span>
       </div>
     );
   }
 
-  if (!user) {
-    return (
-      <div className="text-center py-16 text-gray-400 font-mono text-sm">
-        Please log in to view your prompts.
-      </div>
-    );
-  }
-  
+  // যদি ইউজার ক্রিয়েটর না হয়, কিছু দেখানোর দরকার নেই (রিডাইরেক্ট হয়ে যাবে)
+  if (!user || user.role !== "creator") return null;
 
   return (
     <div className="p-6 max-w-7xl mx-auto text-white min-h-screen relative">
-      {/* হেডার */}
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-2xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
@@ -160,7 +155,6 @@ const MyPrompts = () => {
         </div>
       </div>
 
-      {/* 📊 টেবিল */}
       {prompts.length === 0 ? (
         <div className="text-center py-16 border border-gray-800 rounded-2xl bg-gray-900/30 backdrop-blur-md">
           <p className="text-gray-400 font-mono text-sm">No prompts found! Please create one first.</p>
@@ -178,61 +172,32 @@ const MyPrompts = () => {
                 <th className="p-4 font-semibold text-center">Actions</th>
               </tr>
             </thead>
-
             <tbody className="divide-y divide-gray-800/40 text-sm">
               {prompts.map((prompt) => (
                 <tr key={prompt._id} className="hover:bg-gray-800/10 transition-colors duration-200">
                   <td className="p-4 max-w-xs">
                     <div className="flex items-center space-x-3">
-                      {prompt.thumbnail && (
-                        <img src={prompt.thumbnail} alt="thumb" className="w-8 h-8 rounded object-cover border border-gray-800" />
-                      )}
+                      {prompt.thumbnail && <img src={prompt.thumbnail} alt="thumb" className="w-8 h-8 rounded object-cover border border-gray-800" />}
                       <div className="truncate">
                         <p className="font-medium text-gray-200 truncate">{prompt.title}</p>
                         <p className="text-xs text-gray-500 font-mono truncate">{prompt.difficulty}</p>
                       </div>
                     </div>
                   </td>
-
                   <td className="p-4 text-gray-300 font-medium">
-                    <span className="bg-gray-800/40 px-2.5 py-1 rounded-md text-xs border border-gray-700/30">
-                      {prompt.category}
-                    </span>
+                    <span className="bg-gray-800/40 px-2.5 py-1 rounded-md text-xs border border-gray-700/30">{prompt.category}</span>
                   </td>
-
                   <td className="p-4 text-gray-400 font-mono text-xs">{prompt.aiTool}</td>
                   <td className="p-4 text-gray-300 font-mono font-bold">{prompt.copyCount || 0}</td>
-
                   <td className="p-4">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-mono ${
-                      prompt.status === "approved" 
-                        ? "bg-green-500/10 text-green-400 border border-green-500/20" 
-                        : prompt.status === "rejected"
-                        ? "bg-red-500/10 text-red-400 border border-red-500/20"
-                        : "bg-amber-500/10 text-amber-400 border border-amber-500/20"
-                    }`}>
-                      <span className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
-                        prompt.status === "approved" ? "bg-green-400" : prompt.status === "rejected" ? "bg-red-400" : "bg-amber-400"
-                      }`}></span>
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-mono ${prompt.status === "approved" ? "bg-green-500/10 text-green-400" : prompt.status === "rejected" ? "bg-red-500/10 text-red-400" : "bg-amber-500/10 text-amber-400"}`}>
                       {prompt.status || "pending"}
                     </span>
                   </td>
-
                   <td className="p-4 text-center">
                     <div className="flex items-center justify-center space-x-2">
-                      <button
-                        onClick={() => openUpdateModal(prompt)}
-                        className="px-3 py-1.5 text-xs font-medium bg-blue-600/10 hover:bg-blue-600 text-blue-400 hover:text-white rounded-md border border-blue-500/20 transition-all duration-200 cursor-pointer"
-                      >
-                        Update
-                      </button>
-
-                      <button
-                        onClick={() => openDeleteModal(prompt._id)}
-                        className="px-3 py-1.5 text-xs font-medium bg-red-600/10 hover:bg-red-600 text-red-400 hover:text-white rounded-md border border-red-500/20 transition-all duration-200 cursor-pointer"
-                      >
-                        Delete
-                      </button>
+                      <button onClick={() => openUpdateModal(prompt)} className="px-3 py-1.5 text-xs bg-blue-600/10 hover:bg-blue-600 text-blue-400 rounded-md border border-blue-500/20">Update</button>
+                      <button onClick={() => openDeleteModal(prompt._id)} className="px-3 py-1.5 text-xs bg-red-600/10 hover:bg-red-600 text-red-400 rounded-md border border-red-500/20">Delete</button>
                     </div>
                   </td>
                 </tr>
@@ -242,7 +207,7 @@ const MyPrompts = () => {
         </div>
       )}
 
-      {/* 🔮 ১. আধুনিক গ্লাস-মরফিজম আপডেট মডাল */}
+       {/* 🔮 ১. আধুনিক গ্লাস-মরফিজম আপডেট মডাল */}
       {isEditModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
           <div className="bg-gray-950/80 border border-gray-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl backdrop-blur-xl">
@@ -286,7 +251,7 @@ const MyPrompts = () => {
       {/* 🚨 ২. মডার্ন গ্লাস-মরফিজম ডিলিট কনফার্মেশন মডাল */}
       {isDeleteModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/10 backdrop-blur-sm p-4">
-          <div className="bg-gray-800 border border-red-950/90 border-2 rounded-2xl max-w-sm w-full p-6 shadow-2xl backdrop-blur-xl text-center">
+          <div className="bg-gray-800 border-2 border-red-950/90 rounded-2xl max-w-sm w-full p-6 shadow-2xl backdrop-blur-xl text-center">
             {/* ডিলিট ওয়ার্নিং আইকন */}
             <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-950/50 border border-red-800/30 text-red-400 mb-4">
               ⚠️
