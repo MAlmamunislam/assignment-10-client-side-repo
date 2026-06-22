@@ -16,7 +16,7 @@ export default function Home() {
       <div>
         <HeroBanner/>
       </div>
-      {/* StatsAndCategories */}
+      {/* StatsAndCategories */} 
       <div>
         <StatsAndCategories/>
       </div>
