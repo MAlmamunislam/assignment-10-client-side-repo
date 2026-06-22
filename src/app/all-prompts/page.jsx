@@ -16,7 +16,7 @@ const AllPrompts = () => {
   const [selectedDifficulty, setSelectedDifficulty] = useState("");
   const [sortBy, setSortBy] = useState("latest");
 
-  const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:5000";
+  const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL ;
 
   useEffect(() => {
     const fetchAllPublicPrompts = async () => {

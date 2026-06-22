@@ -56,13 +56,14 @@ const CreatorDashboard = () => {
   }, [user, isPending, router]);
 
   // ২. API থেকে ড্যাশবোর্ডের ডাটা ফেচ করা
+    const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
   useEffect(() => {
     const fetchDashboardStats = async () => {
       // ইউজার ক্রিয়েটর না হলে ডাটা কল করার দরকার নেই
       if (!user?.id || user.role !== 'creator') return;
 
       try {
-        const response = await fetch(`http://localhost:5000/api/users/stats/${user.id}?email=${user.email}`);
+        const response = await fetch(`${SERVER_URL}/api/users/stats/${user.id}?email=${user.email}`);
         if (response.ok) {
           const data = await response.json();
           setStats(data);

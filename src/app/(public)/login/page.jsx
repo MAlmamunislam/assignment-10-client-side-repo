@@ -79,13 +79,7 @@ const SignInForm = () => {
               <label className="text-xs font-semibold text-purple-400/80 uppercase tracking-wider font-mono">
                 Password
               </label>
-              {/* ফরগট পাসওয়ার্ড লিংক (ঐচ্ছিক) */}
-              <a
-                href="/forgot-password"
-                className="text-xs text-purple-400/60 hover:text-purple-400 transition-colors font-medium"
-              >
-                Forgot?
-              </a>
+             
             </div>
             <div className="relative">
               <input

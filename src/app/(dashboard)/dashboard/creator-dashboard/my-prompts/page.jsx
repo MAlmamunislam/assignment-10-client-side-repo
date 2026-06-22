@@ -25,7 +25,7 @@ const MyPrompts = () => {
   const { data: session, isPending: authPending } = authClient.useSession();
   const user = session?.user || null;
   const currentUserId = user?.id || user?._id;
-  const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:5000";
+  const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL ;
 
   // 🛡️ রোল চেক এবং ডাটা ফেচিং লজিক
   useEffect(() => {

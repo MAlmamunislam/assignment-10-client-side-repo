@@ -1,13 +1,39 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Users, FileText, MessageSquare, Copy, Loader2, Award, TrendingUp } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
 
 const AdminAnalytics = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+    const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL ;
+      // sesssion check
+      const router = useRouter();
+      const { data: session, isPending } = authClient.useSession();
+      const user = session?.user || null;
+    
+      const isAdmin = user?.role === "admin";
+    
+      useEffect(() => {
+        if (isPending) {
+          <p className="text-white/90 text-sm font-medium tracking-wide animate-pulse">
+             Loading...
+          </p>;
+          return;
+        }
+        if (!user) {
+          router.replace("/login");
+          return;
+        }
+    
+        if (!isAdmin) {
+          router.replace("/dashboard");
+        }
+      });
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/admin/stats")
+    fetch(`${SERVER_URL}/api/admin/stats`)
       .then((res) => res.json())
       .then((data) => {
         setStats(data);

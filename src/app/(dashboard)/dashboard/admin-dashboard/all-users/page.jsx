@@ -1,28 +1,55 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { Trash2, ShieldCheck } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Trash2 } from "lucide-react";
+import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 const ManageUsers = () => {
   const [users, setUsers] = useState([]);
+  const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
+  // sesssion check
+  const router = useRouter();
+  const { data: session, isPending } = authClient.useSession();
+  const user = session?.user || null;
+
+  const isAdmin = user?.role === "admin";
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/admin/users")
-      .then(res => res.json())
-      .then(data => setUsers(data));
+    if (isPending) {
+      <p className="text-white/90 text-sm font-medium tracking-wide animate-pulse">
+         Loading...
+      </p>;
+      return;
+    }
+    if (!user) {
+      router.replace("/login");
+      return;
+    }
+
+    if (!isAdmin) {
+      router.replace("/dashboard");
+    }
+  });
+
+  useEffect(() => {
+    fetch(`${SERVER_URL}/api/admin/users`)
+      .then((res) => res.json())
+      .then((data) => setUsers(data));
   }, []);
 
   const handleRoleChange = (id, newRole) => {
-    fetch(`http://localhost:5000/api/admin/update-role/${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ role: newRole })
+    fetch(`${SERVER_URL}/api/admin/update-role/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ role: newRole }),
     }).then(() => window.location.reload());
   };
 
   const handleDelete = (id) => {
-    if(confirm("Are you sure?")) {
-        fetch(`http://localhost:5000/api/admin/delete-user/${id}`, { method: 'DELETE' })
-        .then(() => setUsers(users.filter(u => u._id !== id)));
+    if (confirm("Are you sure?")) {
+      fetch(`${SERVER_URL}/api/admin/delete-user/${id}`, {
+        method: "DELETE",
+      }).then(() => setUsers(users.filter((u) => u._id !== id)));
     }
   };
 
@@ -39,15 +66,18 @@ const ManageUsers = () => {
           </tr>
         </thead>
         <tbody className="text-white">
-          {users.map(user => (
-            <tr key={user._id} className="border-b border-white/5 hover:bg-white/5">
+          {users.map((user) => (
+            <tr
+              key={user._id}
+              className="border-b border-white/5 hover:bg-white/5"
+            >
               <td className="py-4">{user.name}</td>
               <td className="py-4">{user.email}</td>
               <td className="py-4">
-                <select 
-                    value={user.role} 
-                    onChange={(e) => handleRoleChange(user._id, e.target.value)}
-                    className="bg-[#030014] border border-white/10 rounded px-2 py-1"
+                <select
+                  value={user.role}
+                  onChange={(e) => handleRoleChange(user._id, e.target.value)}
+                  className="bg-[#030014] border border-white/10 rounded px-2 py-1"
                 >
                   <option value="user">User</option>
                   <option value="creator">Creator</option>
@@ -55,7 +85,10 @@ const ManageUsers = () => {
                 </select>
               </td>
               <td className="py-4">
-                <button onClick={() => handleDelete(user._id)} className="text-red-400 hover:text-red-600">
+                <button
+                  onClick={() => handleDelete(user._id)}
+                  className="text-red-400 hover:text-red-600"
+                >
                   <Trash2 size={18} />
                 </button>
               </td>

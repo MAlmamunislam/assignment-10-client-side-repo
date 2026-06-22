@@ -1,11 +1,40 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
 
 const ManagePayments = () => {
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
-  const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:5000";
+  const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL ;
+
+  // sesssion check
+  const router = useRouter();
+  const { data: session, isPending } = authClient.useSession();
+  const user = session?.user || null;
+
+  const isAdmin = user?.role === "admin";
+
+  useEffect(() => {
+    if (isPending) {
+      <p className="text-white/90 text-sm font-medium tracking-wide animate-pulse">
+         Loading...
+      </p>;
+      return;
+    }
+    if (!user) {
+      router.replace("/login");
+      return;
+    }
+
+    if (!isAdmin) {
+      router.replace("/dashboard");
+    }
+  });
+
+
+
 
   useEffect(() => {
     fetch(`${SERVER_URL}/api/admin/payments`)

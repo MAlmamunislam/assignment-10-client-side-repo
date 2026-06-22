@@ -8,7 +8,7 @@ const ReportedPrompts = () => {
   const [selectedReport, setSelectedReport] = useState(null);
   const [actionType, setActionType] = useState(""); // 'remove', 'warn', 'dismiss'
   
-  const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:5000";
+  const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL ;
 
   useEffect(() => {
     fetch(`${SERVER_URL}/api/admin/reports`)
