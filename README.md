@@ -1,36 +1,40 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# AI Prompt Marketplace
 
-## Getting Started
+This is a modern, community-driven platform where users can discover, share, and manage high-quality AI prompts for tools like ChatGPT, Claude, Midjourney, and more.
 
-First, run the development server:
+## 🚀 Live Link
+👉 [**Check out the Live Platform**](https://assignment-10-client-side-repo.vercel.app/)
 
+---
+
+## 📖 Project Overview
+AI Prompt Marketplace is a dedicated space for AI enthusiasts to exchange prompts. Creators can publish their unique prompts, and users can bookmark, copy, rate, and purchase premium access to exclusive content.
+
+## ✨ Key Features
+- **Role-Based Access Control:** Distinct dashboards for Users, Creators, and Admins.
+- **Advanced Filtering & Search:** Search and filter prompts by category, difficulty, or tool name.
+- **Premium Content:** Stripe payment integration to unlock private/premium prompts.
+- **Engagement Tools:** Bookmark, Copy, Rate, and Review functionality.
+- **Analytics Dashboard:** Visual representation of prompt performance using Recharts.
+- **Admin Management:** Tools to manage users, approve/reject prompts, and handle reports.
+
+## 🛠 Technologies Used
+- **Frontend:** React, Tailwind CSS, Framer Motion, TanStack Query, Axios, Recharts.
+- **Backend:** Node.js, Express.js.
+- **Database:** MongoDB (with Mongoose).
+- **Authentication:** Firebase Auth & JWT.
+- **Payments:** Stripe API.
+
+## 📦 Getting Started
+To run this project locally:
+
+1. **Clone the repositories:**
+   - Client: `https://github.com/your-username/your-client-repo`
+   - Server: `https://github.com/your-username/your-server-repo`
+
+2. **Setup Environment Variables:**
+   Create a `.env` file and add your configuration keys (DB_URI, JWT_SECRET, STRIPE_SECRET_KEY, etc.).
+
+3. **Install Dependencies:**
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+   npm install
